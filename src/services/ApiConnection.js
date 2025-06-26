@@ -1,13 +1,12 @@
 const API_URL = "http://localhost:8080";
 
 export async function apiRequest(endpoint, method = "GET", body = null) {
-  const headers = {
-    "Content-Type": "application/json",
-  };
-
   const config = {
     method,
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
   };
 
   if (body && method !== "GET") {
@@ -16,10 +15,18 @@ export async function apiRequest(endpoint, method = "GET", body = null) {
 
   try {
     const response = await fetch(`${API_URL}${endpoint}`, config);
-    const data = await response.json();
+
+    const contentType = response.headers.get("content-type");
+
+    let data;
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      data = await response.text();
+    }
 
     if (!response.ok) {
-      throw new Error(data?.message || "Error en la petición");
+      throw new Error(data?.message || data || "Error en la petición");
     }
 
     return data;
