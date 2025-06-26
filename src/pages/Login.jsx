@@ -33,10 +33,10 @@ export default function Login() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-tr from-[#84DCC6] to-[#8B95C9]">
       <div className="bg-white/40 shadow-xl backdrop-blur rounded-2xl p-12 w-full max-w-xl">
-        <h2 className="text-2xl font-bold text-center mb-6 text-[#478978]">
-          Gastonauta 🚀
-        </h2>
-
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-[#478978] mx-auto">Gastonauta 🚀</h2>
+        <img src="/gastonauta.png" alt="Logo gastonauta" className="w-20 h-auto ml-4" />
+      </div>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm mb-1 font-medium text-gray-700">Email</label>

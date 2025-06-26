@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../services/apiConnection";
 import DashboardLayout from "../components/DashboardLayout";
 import ResumenCard from "../components/ResumenCard";
+import ResumenPorCategoria from "../components/ResumenPorCategoria";
 
 export default function Dashboard() {
   const [ingresos, setIngresos] = useState([]);
+  const [gastos, setGastos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [resumen, setResumen] = useState([]);
   const usuario = JSON.parse(localStorage.getItem("usuario"));
@@ -36,7 +38,39 @@ export default function Dashboard() {
 
   fetchResumen();
 }, []);
+  useEffect(() => {
+    const fetchIngresos = async () => {
+      const data = await apiRequest("/ingresos", "GET");
+      setIngresos(data);
+    };
+    fetchIngresos();
+  }, []);
 
+  const ingresosFiltradosDelMes = ingresos.filter((ingreso) => {
+  const fecha = new Date(ingreso.fecha);
+  const hoy = new Date();
+  return (
+    fecha.getMonth() === hoy.getMonth() &&
+    fecha.getFullYear() === hoy.getFullYear()
+  );
+});
+
+ useEffect(() => {
+    const fetchGastos = async () => {
+      const data = await apiRequest("/gastos", "GET");
+      setGastos(data);
+    };
+    fetchGastos();
+  }, []);
+
+  const GastosFiltradosDelMes = gastos.filter((gasto) => {
+  const fecha = new Date(gasto.fecha);
+  const hoy = new Date();
+  return (
+    fecha.getMonth() === hoy.getMonth() &&
+    fecha.getFullYear() === hoy.getFullYear()
+  );
+});
 
   return (
     <DashboardLayout>
@@ -53,6 +87,12 @@ export default function Dashboard() {
             <ResumenCard titulo="Gastos" monto={resumen.totalGastos} bgColor="#FCEBEA" textColor="#F44336" />
             <ResumenCard titulo="Balance" monto={resumen.saldo} bgColor="#E8F0FE" textColor="#2196F3" />
         </div>
+
+       <div className="flex flex-col lg:flex-row gap-6">
+        <ResumenPorCategoria datos={ingresosFiltradosDelMes} tipo="INGRESO" />
+        <ResumenPorCategoria datos={GastosFiltradosDelMes} tipo="GASTO" />
+      </div>
+
     </DashboardLayout>
 
   );
